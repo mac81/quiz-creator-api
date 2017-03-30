@@ -42,7 +42,7 @@ router.route('/questions')
 
         var question = new Question({
             question: req.body.question,
-            author: req.body.author,
+            correctAnswerId: req.body.correctAnswerId,
             answers: req.body.answers
         });
 
@@ -91,18 +91,19 @@ router.route('/questions/:question_id')
             if (err)
                 res.send(err);
 
-            question = {
-                question: req.body.question,
-                author: req.body.author,
-                answers: req.body.answers
-            };
+            question.question = req.body.question ? req.body.question : question.question;
+            question.correctAnswerId = req.body.correctAnswerId ? req.body.correctAnswerId : question.correctAnswerId;
+            question.answers = req.body.answers ? req.body.answers : question.answers;
 
             // save question
             question.save(function(err) {
                 if (err)
                     res.send(err);
 
-                res.json({ message: `Question updated! ${question}` });
+                res.json({
+                    message: 'Question updated!',
+                    payload: question
+                });
             });
 
         });
