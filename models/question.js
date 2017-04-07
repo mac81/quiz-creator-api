@@ -3,10 +3,10 @@ var Schema = mongoose.Schema;
 
 var QuestionSchema = new Schema({
   questionText: String,
-  correctAnswerId: String,
   answers: [
     {
-      answerText: String
+      type: Schema.ObjectId,
+      ref: 'Answer'
     }
   ]
 });
