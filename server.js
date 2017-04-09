@@ -4,6 +4,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var morgan = require('morgan')
 
 var server = express();
 
@@ -17,9 +18,11 @@ mongoose.connect('mongodb://admin:admin@ds115110.mlab.com:15110/quiz-creator-api
 // ROUTES FOR API
 var router = express.Router();
 
+// Logger
+server.use(morgan('dev'));
+
 // middleware for all requests
 router.use(function (req, res, next) {
-  console.log(`${req.method} ${req.url}`);
   next();
 });
 
@@ -44,6 +47,7 @@ router.get('/', function (req, res) {
 
 // REQUIRE ROUTES
 require('./routes/questions')(router);
+require('./routes/users')(router);
 
 // REGISTER ROUTES
 // all routes will be prefixed with /api
@@ -52,4 +56,3 @@ server.use('/api', router);
 // START THE SERVER
 server.listen(port);
 console.log('Server started on ' + port);
-
