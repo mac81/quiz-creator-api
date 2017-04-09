@@ -4,12 +4,19 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var morgan = require('morgan')
+var morgan = require('morgan');
+var expressJWT = require('express-jwt');
+var jwt = require('jsonwebtoken');
 
 var server = express();
 
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(bodyParser.json());
+server.use(expressJWT({
+    secret: 'Edinburgh 173'
+}).unless({
+    path: ['/api/users/signin', '/api/users/signup']
+}));
 
 var port = process.env.PORT || 3001;
 
