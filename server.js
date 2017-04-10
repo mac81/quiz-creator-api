@@ -15,7 +15,7 @@ server.use(bodyParser.json());
 server.use(expressJWT({
     secret: 'Edinburgh 173'
 }).unless({
-    path: ['/api/users/signin', '/api/users/signup']
+    path: ['/api/users', '/api/users/signin', '/api/users/signup']
 }));
 
 var port = process.env.PORT || 3001;
@@ -53,6 +53,7 @@ router.get('/', function (req, res) {
 });
 
 // REQUIRE ROUTES
+require('./routes/quizzes')(router);
 require('./routes/questions')(router);
 require('./routes/users')(router);
 
