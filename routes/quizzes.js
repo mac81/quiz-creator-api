@@ -33,4 +33,20 @@ module.exports = function (router) {
       });
     });
 
+  /**
+   ## on routes that end in /quiz
+   **/
+  router.route('/quiz/:quiz_id')
+
+  /** CREATE A QUESTION (accessed at POST http://localhost:3001/api/questions) **/
+
+    /** GET QUESTION WITH ID (accessed at GET http://localhost:3001/api/questions/:question_id) **/
+    .get(function (req, res) {
+      Quiz.findById(req.params.quiz_id).populate('questions').exec(function(err, quiz) {
+        if (err) throw err;
+
+        res.json(quiz);
+      });
+    })
+
 };

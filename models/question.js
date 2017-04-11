@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 var QuestionSchema = new Schema({
   questionText: String,
+  label: String,
   answers: [
     {
       type: Schema.ObjectId,
@@ -11,10 +12,10 @@ var QuestionSchema = new Schema({
   ]
 });
 
-QuestionSchema.statics.getQuestions = function(callback){
-  this.find({})
-    .select('questionText')
-    .exec(callback);
-};
+// QuestionSchema.statics.getQuestions = function(callback){
+//   this.find({})
+//     .select('questionText')
+//     .exec(callback);
+// };
 
 module.exports = mongoose.model('Question', QuestionSchema);

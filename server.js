@@ -1,6 +1,3 @@
-// BASE SETUP
-// =============================================================================
-
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
@@ -35,21 +32,7 @@ router.use(function (req, res, next) {
 
 /** ROOT ROUTE (accessed at GET http://localhost:3001/api) **/
 router.get('/', function (req, res) {
-  res.json({
-    message: 'Welcome to Quiz Creator Api',
-    routes: [
-      {
-        description: 'Create a question',
-        method: 'POST',
-        url: 'http://localhost:3001/api/questions'
-      },
-      {
-        description: 'Get all questions',
-        method: 'GET',
-        url: 'http://localhost:3001/api/questions'
-      }
-    ]
-  });
+  res.send('Welcome to Quiz Creator API!')
 });
 
 // REQUIRE ROUTES

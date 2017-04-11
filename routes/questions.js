@@ -15,28 +15,40 @@ module.exports = function (router) {
         questionText: req.body.questionText
       });
 
-      req.body.answers.forEach(function(answer) {
-        var answer = new Answer({
-          answerText: answer.answerText,
-          isCorrectAnswer: answer.isCorrectAnswer
-        });
-        answer.save();
-        question.answers.push(answer);
-      });
+      Question.count({}, function(err, count) {
+        question.label = `q${count + 1}`;
 
-      question.save(function (err) {
-        if (err) throw err;
+        if(req.body.answers) {
+          req.body.answers.forEach(function(answer) {
+            var answer = new Answer({
+              answerText: answer.answerText,
+              isCorrectAnswer: answer.isCorrectAnswer
+            });
+            answer.save();
+            question.answers.push(answer);
+          });
+        }
 
-        res.json({
-          message: 'Question created!',
-          payload: question
+        question.save(function (err) {
+          if (err) throw err;
+
+          res.json({
+            message: 'Question created!',
+            payload: question
+          });
         });
+
       });
     })
 
     /** GET ALL QUESTIONS (accessed at GET http://localhost:3001/api/questions) **/
     .get(function (req, res) {
-      Question.find({}).populate('answers').exec(function(err, questions) {
+      // Question.find({}).populate('answers').exec(function(err, questions) {
+      //   if (err) throw err;
+      //
+      //   res.json(questions);
+      // });
+      Question.find({}, function(err, questions) {
         if (err) throw err;
 
         res.json(questions);
