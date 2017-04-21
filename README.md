@@ -7,17 +7,34 @@
 
 ### Questions
 
+##### Get all questions
+* GET     api/questions
+
+##### Get all questions in quiz
 * GET     api/quiz/:quiz_id/questions
+
+##### Create new question in quiz
 * POST    api/quiz/:quiz_id/questions
-* PUT     api/quiz/:quiz_id/questions/:question_id
-* DELETE  api/quiz/:quiz_id/questions/:question_id
+
+##### Edit question
+* PUT     api/questions/:question_id
+
+##### Delete question
+* DELETE  questions/:question_id
 
 ### Answers
 
-* GET     api/questions/answers
-* POST    api/questions/answers
-* PUT     api/questions/answers/answer_id
-* DELETE  api/questions/answers/answer_id
+##### Get all answers in question
+* GET     api/questions/:question_id/answers
+
+##### Create new answer in question
+* POST    api/questions/:question_id/answers
+
+##### Edit answer
+* PUT     api/answers/answer_id
+
+##### Delete answer
+* DELETE  api/answers/answer_id
 
 ### Users
 

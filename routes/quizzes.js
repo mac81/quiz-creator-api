@@ -7,7 +7,7 @@ module.exports = function (router) {
    **/
   router.route('/quiz')
 
-    /** CREATE A QUESTION (accessed at POST http://localhost:3001/api/questions) **/
+    /** CREATE A QUIZ (accessed at POST http://localhost:3001/api/quiz) **/
     .post(function (req, res) {
 
       var quiz = new Quiz({
@@ -34,19 +34,40 @@ module.exports = function (router) {
     });
 
   /**
-   ## on routes that end in /quiz
+   ## on routes that end in /quiz/:quiz_id
    **/
   router.route('/quiz/:quiz_id')
 
-  /** CREATE A QUESTION (accessed at POST http://localhost:3001/api/questions) **/
-
-    /** GET QUESTION WITH ID (accessed at GET http://localhost:3001/api/questions/:question_id) **/
+    /** GET QUIZ WITH ID (accessed at GET http://localhost:3001/api/quiz/:quiz_id) **/
     .get(function (req, res) {
-      Quiz.findById(req.params.quiz_id).populate('questions').exec(function(err, quiz) {
+      Quiz.findById(req.params.quiz_id, function(err, quiz) {
         if (err) throw err;
 
-        res.json(quiz);
+        if(quiz) {
+          res.json(quiz);
+        } else {
+          res.json({
+            message: 'Quiz not found!'
+          });
+        }
       });
     })
+
+    /** DELETE QUIZ WITH ID (accessed at DELETE http://localhost:3001/api/quiz/:quiz_id) **/
+    .delete(function (req, res) {
+      Quiz.findByIdAndRemove(req.params.quiz_id, function(err, quiz) {
+        if (err) throw err;
+
+        if(quiz) {
+          res.json({
+            message: 'Quiz successfully deleted'
+          });
+        } else {
+          res.json({
+            message: 'Quiz not found!'
+          });
+        }
+      });
+    });
 
 };

@@ -1,7 +1,74 @@
+var Quiz = require('../models/quiz');
 var Question = require('../models/question');
 var Answer = require('../models/answer');
 
 module.exports = function (router) {
+
+  /**
+   ## on routes that end in /quiz/:quiz_id/questions
+   **/
+  router.route('/quiz/:quiz_id/questions')
+
+    /** GET ALL QUESTIONS IN QUIZ (accessed at GET http://localhost:3001/api/quiz/:quiz_id/questions) **/
+    .get(function (req, res) {
+      Quiz.findById(req.params.quiz_id).populate('questions').exec(function(err, quiz) {
+        if (err) throw err;
+
+        res.json(quiz.questions);
+      });
+    })
+
+    /** CREATE A QUESTION (accessed at POST http://localhost:3001/api/questions) **/
+    .post(function (req, res) {
+
+      var question = new Question({
+        questionText: req.body.questionText
+      });
+
+      Question.count({}, function(err, count) {
+        question.label = `q${count + 1}`;
+        question.nodeId = count + 1;
+
+        if(req.body.answers) {
+          req.body.answers.forEach(function(answer) {
+            var answer = new Answer({
+              answerText: answer.answerText,
+              isCorrectAnswer: answer.isCorrectAnswer
+            });
+            answer.save();
+            question.answers.push(answer);
+          });
+        }
+
+        question.save(function (err) {
+          if (err) throw err;
+
+          const position = req.body.insertPosition === 'before' ? req.body.position : req.body.position + 1;
+
+          Quiz.findByIdAndUpdate(req.params.quiz_id, {
+            $push: {
+              questions: {
+                $each: [
+                  question
+                ],
+                $position: position
+              }
+            }
+          },{
+            new: true
+          }, function(err) {
+            if (err) throw err;
+
+            res.json({
+              message: 'Question created!',
+              payload: question
+            });
+          });
+
+        });
+
+      });
+    })
 
   /**
    ## on routes that end in /questions
@@ -32,10 +99,24 @@ module.exports = function (router) {
         question.save(function (err) {
           if (err) throw err;
 
-          res.json({
-            message: 'Question created!',
-            payload: question
+          Quiz.findByIdAndUpdate(req.params.quiz_id, {
+            $push: {
+              questions: {
+                $each: [
+                  question
+                ],
+                $position: 1
+              }
+            }
+          },{
+            new: true
+          }, function(err) {
+            res.json({
+              message: 'Question created!',
+              payload: question
+            });
           });
+
         });
 
       });
