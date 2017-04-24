@@ -12,10 +12,13 @@
   "dependencies": {
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.0",
+    "connect-flash": "^0.1.1",
     "express": "^4.15.0",
     "express-jwt": "^5.1.0",
+    "express-session": "^1.15.2",
     "jsonwebtoken": "^7.3.0",
-    "mongoose": "^4.9.3"
+    "mongoose": "^4.9.3",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "morgan": "^1.8.1",

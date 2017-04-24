@@ -1,4 +1,5 @@
 var Quiz = require('../models/quiz');
+var User = require('../models/user');
 
 module.exports = function (router) {
 
@@ -11,7 +12,8 @@ module.exports = function (router) {
     .post(function (req, res) {
 
       var quiz = new Quiz({
-        name: req.body.name
+        name: req.body.name,
+        creator: req.user
       });
 
       quiz.save(function (err) {

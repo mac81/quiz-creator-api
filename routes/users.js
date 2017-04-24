@@ -1,5 +1,9 @@
 var User = require('../models/user');
 var jwt = require('jsonwebtoken');
+var passport = require('passport');
+
+
+
 
 module.exports = function (router) {
 
@@ -37,44 +41,48 @@ module.exports = function (router) {
   router.route('/users/signup')
 
     /** CREATE A USER (accessed at POST http://localhost:3001/api/users/signup) **/
-    .post(function (req, res) {
-      console.log(req.body)
-      if (!req.body.username) {
-        res.status(401).send('username required');
-        return;
-      }
-
-      if (!req.body.password) {
-        res.status(401).send('password required');
-        return;
-      }
-
-      User.findOne({username: req.body.username}, function (err, user) {
-        if (user) {
-          res.send('username taken');
-          return;
-        } else {
-          var newUser = User({
-            username: req.body.username,
-            password: req.body.password
-          });
-
-          // save the user
-          newUser.save(function (err) {
-            if (err) throw err;
-
-            newUser.comparePassword(req.body.password, function (err, isMatch) {
-              if (err) throw err;
-
-              if (isMatch) {
-                res.json('User created!');
-              }
-            });
-
-          });
-        }
-      });
-    });
+    .post(passport.authenticate('signup', {
+      successRedirect: '/home',
+      failureRedirect: '/signup',
+      failureFlash : true
+    }))
+      // console.log(req.body)
+      // if (!req.body.username) {
+      //   res.status(401).send('username required');
+      //   return;
+      // }
+      //
+      // if (!req.body.password) {
+      //   res.status(401).send('password required');
+      //   return;
+      // }
+      //
+      // User.findOne({username: req.body.username}, function (err, user) {
+      //   if (user) {
+      //     res.send('username taken');
+      //     return;
+      //   } else {
+      //     var newUser = User({
+      //       username: req.body.username,
+      //       password: req.body.password
+      //     });
+      //
+      //     // save the user
+      //     newUser.save(function (err) {
+      //       if (err) throw err;
+      //
+      //       newUser.comparePassword(req.body.password, function (err, isMatch) {
+      //         if (err) throw err;
+      //
+      //         if (isMatch) {
+      //           res.json('User created!');
+      //         }
+      //       });
+      //
+      //     });
+      //   }
+      // });
+    // });
 
   /**
    ## on routes that end in /users/signin
@@ -82,30 +90,37 @@ module.exports = function (router) {
   router.route('/users/signin')
 
   /** SIGN IN USER (accessed at POST http://localhost:3001/api/users/signin) **/
-    .post(function (req, res) {
+    .post(passport.authenticate('login', {
+        successRedirect: '/home',
+        failureRedirect: '/',
+        failureFlash : true
+      }));
 
-      if (!req.body.username) {
-        res.status(401).send('username required');
-        return;
-      }
-
-      if (!req.body.password) {
-        res.status(401).send('password required');
-        return;
-      }
-
-      User.findOne({username: req.body.username}, function (err, user) {
-        // test a matching password
-        user.comparePassword(req.body.password, function (err, isMatch) {
-          if (err) throw err;
-
-          if (isMatch) {
-            const token = jwt.sign({username: req.body.username}, 'Edinburgh 173');
-            res.status(200).json(token);
-          }
-        });
-
-      });
-    })
+      // if (!req.body.username) {
+      //   res.status(401).send('username required');
+      //   return;
+      // }
+      //
+      // if (!req.body.password) {
+      //   res.status(401).send('password required');
+      //   return;
+      // }
+      //
+      // User.findOne({username: req.body.username}, function (err, user) {
+      //   // test a matching password
+      //   user.comparePassword(req.body.password, function (err, isMatch) {
+      //     if (err) throw err;
+      //
+      //     if (isMatch) {
+      //       const token = jwt.sign({username: req.body.username}, 'Edinburgh 173');
+      //       res.status(200).json({
+      //         user,
+      //         token
+      //       });
+      //     }
+      //   });
+      //
+      // });
+    //})
 
 };
