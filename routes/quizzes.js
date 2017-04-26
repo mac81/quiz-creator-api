@@ -1,5 +1,6 @@
 var Quiz = require('../models/quiz');
-var User = require('../models/user');
+var User = require('../models/account');
+var passport = require('passport');
 
 module.exports = function (router) {
 
@@ -27,7 +28,8 @@ module.exports = function (router) {
     })
 
     /** GET ALL QUIZZES (accessed at GET http://localhost:3001/api/quiz) **/
-    .get(function (req, res) {
+    .get(passport.authenticate('local', { session: false }), function (req, res) {
+
       Quiz.find({}, function (err, quizzes) {
         if (err) throw err;
 
