@@ -2,31 +2,16 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 //var passportLocalMongoose = require('passport-local-mongoose');
 
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 
-
-
-var Account = new Schema({
+var AccountSchema = new Schema({
   username: {type: String},
   password: {type: String}
 });
 
 //Account.plugin(passportLocalMongoose);
 
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    Account.findOne({ username: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
-    });
-  }
-));
+AccountSchema.methods.validPassword = function(pw, cb) {
+  return true;
+};
 
-module.exports = mongoose.model('Account', Account);
+module.exports = mongoose.model('Account', AccountSchema);

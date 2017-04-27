@@ -4,24 +4,24 @@ var mongoose = require('mongoose');
 var morgan = require('morgan');
 var expressSession = require('express-session');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var Account = require('./models/account');
+var config = require('./config/main');
 
 var server = express();
 
+var port = process.env.PORT || 3001;
+
+mongoose.connect(config.database);
+
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(bodyParser.json());
+
 server.use(expressSession({secret: 'mySecretKey'}));
+
 server.use(passport.initialize());
 server.use(passport.session());
 
-var port = process.env.PORT || 3001;
+require('./config/passport')(passport);
 
-mongoose.connect('mongodb://admin:admin@ds115110.mlab.com:15110/quiz-creator-api');
-
-// passport.use(new LocalStrategy(Account.authenticate()));
-// passport.serializeUser(Account.serializeUser());
-// passport.deserializeUser(Account.deserializeUser());
 
 // ROUTES FOR API
 var router = express.Router();
