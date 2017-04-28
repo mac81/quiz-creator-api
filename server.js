@@ -1,53 +1,34 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var morgan = require('morgan');
-var expressSession = require('express-session');
-var passport = require('passport');
-var config = require('./config/main');
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const passport = require('passport');
+const config = require('./config/main');
+const router = require('./router');
 
-var server = express();
-
-var port = process.env.PORT || 3001;
+const app = express();
 
 mongoose.connect(config.database);
 
-server.use(bodyParser.urlencoded({extended: true}));
-server.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(passport.initialize());
+app.use(morgan('dev'));
 
-server.use(expressSession({secret: 'mySecretKey'}));
-
-server.use(passport.initialize());
-server.use(passport.session());
-
-require('./config/passport')(passport);
-
-
-// ROUTES FOR API
-var router = express.Router();
-
-// Logger
-server.use(morgan('dev'));
-
-// middleware for all requests
-router.use(function (req, res, next) {
-    next();
+// Enable CORS from client-side
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
 });
 
-/** ROOT ROUTE (accessed at GET http://localhost:3001/api) **/
-router.get('/', function (req, res) {
-  res.send('Welcome to Quiz Creator API!')
-});
+router(app);
 
-// REQUIRE ROUTES
-require('./routes/quizzes')(router);
-require('./routes/questions')(router);
-require('./routes/accounts')(router);
+// Start server
+const server = app.listen(config.port);
+console.log('Your server is running on port ' + config.port + '.');
 
-// REGISTER ROUTES
-// all routes will be prefixed with /api
-server.use('/api', router);
 
-// START THE SERVER
-server.listen(port);
-console.log('Server started on ' + port);
+
