@@ -48,16 +48,16 @@ module.exports = function(app) {
   apiRoutes.use('/quiz', quizRoutes);
 
   // Create new quiz
-  quizRoutes.post('/', QuizController.createQuiz);
+  quizRoutes.post('/', requireAuth, QuizController.createQuiz);
 
   // Get all quizzes
-  quizRoutes.get('/', requireAuth,  QuizController.getQuizzes);
+  quizRoutes.get('/', requireAuth, QuizController.getQuizzes);
 
   // Get quiz by id
-  quizRoutes.get('/:quizId', requireAuth,  QuizController.getQuiz);
+  quizRoutes.get('/:quizId', requireAuth, QuizController.getQuiz);
 
   // Delete quiz
-  quizRoutes.delete('/:quizId', requireAuth,  QuizController.deleteQuiz);
+  quizRoutes.delete('/:quizId', requireAuth, QuizController.deleteQuiz);
 
 
   // Set url for API group routes
