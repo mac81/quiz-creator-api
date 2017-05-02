@@ -23,7 +23,6 @@ exports.createQuiz = function(req, res, next) {
 // Get all Quizzes
 //========================================
 exports.getQuizzes = function(req, res, next) {
-
   const query = Quiz.find({});
   query.where('creator', req.user._id);
   query.exec(function (err, docs) {
