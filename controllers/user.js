@@ -7,7 +7,12 @@ const setUserInfo = require('../utils').setUserInfo;
 exports.getUserProfile = function(req, res, next) {
   const userId = req.params.userId;
 
-  if (req.user._id.toString() !== userId) { return res.status(401).json({ error: 'You are not authorized to view this user profile.' }); }
+  if (req.user._id.toString() !== userId) {
+    return res.status(401).json({
+      error: 'You are not authorized to view this user profile.'
+    });
+  }
+
   User.findById(userId, (err, user) => {
     if (err) {
       res.status(400).json({ error: 'No user could be found for this ID.' });
