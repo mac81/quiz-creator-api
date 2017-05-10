@@ -65,6 +65,12 @@ module.exports = function(app) {
   // Create new quiz question
   quizRoutes.post('/:quizId/questions', requireAuth, QuizController.createQuizQuestion);
 
+  // Get quiz question
+  quizRoutes.get('/questions/:questionId', requireAuth, QuizController.getQuestion);
+
+  // Delete quiz question
+  quizRoutes.delete('/questions/:questionId', requireAuth, QuizController.deleteQuestion);
+
 
   // Set url for API group routes
   app.use('/api', apiRoutes);

@@ -42,9 +42,7 @@ exports.getQuizzes = function(req, res, next) {
 //========================================
 exports.getQuiz = function(req, res, next) {
 
-  console.log(req.user._id)
-  // Quiz.findById(req.params.quizId, function(err, quiz) {
-  Quiz.findById(req.params.quizId).populate('questions').exec(function(err, quiz) {
+  Quiz.findById(req.params.quizId, function(err, quiz) {
     if (err) { return next(err); }
 
     if(quiz) {
@@ -118,31 +116,67 @@ exports.createQuizQuestion = function(req, res, next) {
 
     question.save(function (err) {
       if (err) throw err;
-
-      const position = req.body.insertPosition === 'before' ? req.body.position : req.body.position + 1;
-
-      Quiz.findByIdAndUpdate(req.params.quiz_id, {
-        $push: {
-          questions: {
-            $each: [
-              question
-            ],
-            $position: position
-          }
-        }
-      },{
-        new: true
-      }, function(err) {
-        if (err) throw err;
-
-        res.json({
-          message: 'Question created!',
-          payload: question
-        });
-      });
-
     });
+  });
 
+  const position = req.body.insertPosition === 'before' ? req.body.position : req.body.position + 1;
+
+  Quiz.findByIdAndUpdate(req.params.quizId, {
+    $push: {
+      questions: {
+        $each: [
+          question
+        ],
+        $position: position
+      }
+    }
+  },{
+    new: true
+  }, function(err) {
+    if (err) throw err;
+
+    res.json({
+      message: 'Question created!',
+      payload: question
+    });
+  });
+
+
+};
+
+//========================================
+// Get Question
+//========================================
+exports.getQuestion = function(req, res, next) {
+  Question.findById(req.params.questionId, function(err, question) {
+    if (err) { return next(err); }
+
+    if(question) {
+      res.json(question);
+    } else {
+      res.json({
+        message: 'Question not found!'
+      });
+    }
+  });
+};
+
+//========================================
+// Delete Question
+//========================================
+exports.deleteQuestion = function(req, res, next) {
+  Question.findByIdAndRemove(req.params.questionId, function(err, question) {
+    if (err) throw err;
+
+    if(question) {
+      res.json({
+        message: 'Question successfully deleted'
+      });
+    } else {
+      res.json({
+        message: 'Question not found!'
+      });
+    }
   });
 };
 
