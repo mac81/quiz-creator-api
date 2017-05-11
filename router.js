@@ -5,6 +5,7 @@ const passport = require('passport');
 const AuthenticationController = require('./controllers/authentication');
 const QuizController = require('./controllers/quiz');
 const UserController = require('./controllers/user');
+const QuestionController = require('./controllers/question');
 
 // Middleware to require login/auth
 const requireAuth = passport.authenticate('jwt', { session: false });
@@ -16,6 +17,7 @@ module.exports = function(app) {
   const authRoutes = express.Router();
   const userRoutes = express.Router();
   const quizRoutes = express.Router();
+  const questionRoutes = express.Router();
 
   //=========================
   // Auth Routes
@@ -65,11 +67,20 @@ module.exports = function(app) {
   // Create new quiz question
   quizRoutes.post('/:quizId/questions', requireAuth, QuizController.createQuizQuestion);
 
-  // Get quiz question
-  quizRoutes.get('/questions/:questionId', requireAuth, QuizController.getQuestion);
+  //=========================
+  // Question Routes
+  //=========================
 
-  // Delete quiz question
-  quizRoutes.delete('/questions/:questionId', requireAuth, QuizController.deleteQuestion);
+  apiRoutes.use('/questions', questionRoutes);
+
+  // Get question
+  questionRoutes.get('/:questionId', requireAuth, QuestionController.getQuestion);
+
+  // Delete question
+  questionRoutes.delete('/:questionId', requireAuth, QuestionController.deleteQuestion);
+
+  // Update question
+  questionRoutes.put('/:questionId', requireAuth, QuestionController.updateQuestion);
 
 
   // Set url for API group routes
