@@ -2,6 +2,63 @@ const Quiz = require('../models/quiz');
 const Question = require('../models/question');
 
 //========================================
+// Get Quiz questions
+//========================================
+exports.getQuestions = function(req, res, next) {
+  Quiz.findById(req.params.quizId).populate('questions').exec(function(err, quiz) {
+    if (err) { return next(err); }
+
+    if(quiz) {
+      res.json(quiz.questions);
+    } else {
+      res.json({
+        message: 'Quiz questions not found!'
+      });
+    }
+  });
+};
+
+//========================================
+// Create Quiz question
+//========================================
+exports.createQuestion = function(req, res, next) {
+  var question = new Question({
+    questionText: req.body.questionText
+  });
+
+  Question.count({}, function(err, count) {
+    question.label = `q${count + 1}`;
+    question.nodeId = count + 1;
+
+    question.save(function (err) {
+      if (err) throw err;
+    });
+  });
+
+  const position = req.body.insertPosition === 'before' ? req.body.position : req.body.position + 1;
+
+  Quiz.findByIdAndUpdate(req.params.quizId, {
+    $push: {
+      questions: {
+        $each: [
+          question
+        ],
+        $position: position
+      }
+    }
+  },{
+    new: true
+  }, function(err) {
+    if (err) throw err;
+
+    res.json({
+      message: 'Question created!',
+      payload: question
+    });
+  });
+};
+
+//========================================
 // Get Question
 //========================================
 exports.getQuestion = function(req, res, next) {
@@ -47,6 +104,12 @@ exports.updateQuestion = function(req, res, next) {
     new: true
   },function(err, question) {
     if (err) throw err;
+
+    // Quiz.findById(req.params.quizId, function(err, quiz) {
+    //   if (err) { return next(err); }
+    //
+    //   res.json(question);
+    // });
 
     res.json(question);
   });

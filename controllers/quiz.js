@@ -75,74 +75,20 @@ exports.deleteQuiz = function(req, res, next) {
 };
 
 //========================================
-// Get Quiz questions
+// Update Quiz
 //========================================
-exports.getQuizQuestions = function(req, res, next) {
-  Quiz.findById(req.params.quizId).populate('questions').exec(function(err, quiz) {
+exports.updateQuiz = function(req, res, next) {
+  Quiz.findById(req.params.quizId, function(err, quiz) {
     if (err) { return next(err); }
 
-    if(quiz) {
-      res.json(quiz.questions);
-    } else {
-      res.json({
-        message: 'Quiz questions not found!'
-      });
-    }
-  });
-};
-
-//========================================
-// Create Quiz question
-//========================================
-exports.createQuizQuestion = function(req, res, next) {
-  var question = new Question({
-    questionText: req.body.questionText
-  });
-
-  Question.count({}, function(err, count) {
-    question.label = `q${count + 1}`;
-    question.nodeId = count + 1;
-
-    // if(req.body.answers) {
-    //   req.body.answers.forEach(function(answer) {
-    //     var answer = new Answer({
-    //       answerText: answer.answerText,
-    //       isCorrectAnswer: answer.isCorrectAnswer
-    //     });
-    //     answer.save();
-    //     question.answers.push(answer);
-    //   });
-    // }
-
-    question.save(function (err) {
-      if (err) throw err;
-    });
-  });
-
-  const position = req.body.insertPosition === 'before' ? req.body.position : req.body.position + 1;
-
-  Quiz.findByIdAndUpdate(req.params.quizId, {
-    $push: {
-      questions: {
-        $each: [
-          question
-        ],
-        $position: position
-      }
-    }
-  },{
-    new: true
-  }, function(err) {
-    if (err) throw err;
-
     res.json({
-      message: 'Question created!',
-      payload: question
+      message: 'TODO: update quiz'
     });
+
   });
-
-
 };
+
+
 
 
 

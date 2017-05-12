@@ -6,6 +6,7 @@ const AuthenticationController = require('./controllers/authentication');
 const QuizController = require('./controllers/quiz');
 const UserController = require('./controllers/user');
 const QuestionController = require('./controllers/question');
+const AnswerController = require('./controllers/answer');
 
 // Middleware to require login/auth
 const requireAuth = passport.authenticate('jwt', { session: false });
@@ -17,7 +18,6 @@ module.exports = function(app) {
   const authRoutes = express.Router();
   const userRoutes = express.Router();
   const quizRoutes = express.Router();
-  const questionRoutes = express.Router();
 
   //=========================
   // Auth Routes
@@ -49,11 +49,11 @@ module.exports = function(app) {
   // Set quiz routes as subgroup/middleware to apiRoutes
   apiRoutes.use('/quiz', quizRoutes);
 
-  // Create new quiz
-  quizRoutes.post('/', requireAuth, QuizController.createQuiz);
-
   // Get all quizzes
   quizRoutes.get('/', requireAuth, QuizController.getQuizzes);
+
+  // Create new quiz
+  quizRoutes.post('/', requireAuth, QuizController.createQuiz);
 
   // Get quiz by id
   quizRoutes.get('/:quizId', requireAuth, QuizController.getQuiz);
@@ -61,27 +61,50 @@ module.exports = function(app) {
   // Delete quiz
   quizRoutes.delete('/:quizId', requireAuth, QuizController.deleteQuiz);
 
-  // Get quiz questions
-  quizRoutes.get('/:quizId/questions', requireAuth, QuizController.getQuizQuestions);
-
-  // Create new quiz question
-  quizRoutes.post('/:quizId/questions', requireAuth, QuizController.createQuizQuestion);
+  // Update quiz
+  quizRoutes.put('/:quizId', requireAuth, QuizController.updateQuiz);
 
   //=========================
   // Question Routes
   //=========================
 
-  apiRoutes.use('/questions', questionRoutes);
+  // Get all questions
+  quizRoutes.get('/:quizId/questions', requireAuth, QuestionController.getQuestions);
+
+  // Create new question
+  quizRoutes.post('/:quizId/questions', requireAuth, QuestionController.createQuestion);
 
   // Get question
-  questionRoutes.get('/:questionId', requireAuth, QuestionController.getQuestion);
+  quizRoutes.get('/:quizId/questions/:questionId', requireAuth, QuestionController.getQuestion);
 
   // Delete question
-  questionRoutes.delete('/:questionId', requireAuth, QuestionController.deleteQuestion);
+  quizRoutes.delete('/:quizId/questions/:questionId', requireAuth, QuestionController.deleteQuestion);
 
   // Update question
-  questionRoutes.put('/:questionId', requireAuth, QuestionController.updateQuestion);
+  quizRoutes.put('/:quizId/questions/:questionId', requireAuth, QuestionController.updateQuestion);
 
+  //=========================
+  // Answer Routes
+  //=========================
+
+  // Get all questions
+  quizRoutes.get('/:quizId/questions/:questionId/answers', requireAuth, AnswerController.getAnswers);
+
+  // Create new answer
+  quizRoutes.post('/:quizId/questions/:questionId/answers', requireAuth, AnswerController.createAnswer);
+
+  // Get answer
+  quizRoutes.get('/:quizId/questions/:questionId/answers/:answerId', requireAuth, AnswerController.getAnswer);
+
+  // Delete answer
+  quizRoutes.delete('/:quizId/questions/:questionId/answers/:answerId', requireAuth, AnswerController.deleteAnswer);
+
+  // Update answer
+  quizRoutes.put('/:quizId/questions/:questionId/answers/:answerId', requireAuth, AnswerController.updateAnswer);
+
+  //=========================
+  // All Routes
+  //=========================
 
   // Set url for API group routes
   app.use('/api', apiRoutes);
