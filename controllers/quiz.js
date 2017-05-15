@@ -48,8 +48,9 @@ exports.getQuiz = function(req, res, next) {
     if(quiz) {
       res.json(quiz);
     } else {
-      res.json({
-        message: 'Quiz not found!'
+      res.status(404).json({
+        status: 404,
+        message: 'Quiz not found'
       });
     }
   });
@@ -87,8 +88,3 @@ exports.updateQuiz = function(req, res, next) {
 
   });
 };
-
-
-
-
-
