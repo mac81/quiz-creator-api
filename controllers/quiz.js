@@ -1,5 +1,6 @@
 const Quiz = require('../models/quiz');
 const Question = require('../models/question');
+const User = require('../models/user');
 
 //========================================
 // Create Quiz
@@ -26,11 +27,14 @@ exports.createQuiz = function(req, res, next) {
 exports.getQuizzes = function(req, res, next) {
   const query = Quiz.find({});
   query.where('creator', req.user._id);
+  query.populate('creator', 'profile');
   query.exec(function (err, docs) {
 
     if (err) { return next(err); }
 
-    res.status(201).json({
+    res.status(201).set({
+      'Content-Type': 'application/json'
+    }).json({
       message: 'Success',
       payload: docs
     });

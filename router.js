@@ -9,7 +9,9 @@ const QuestionController = require('./controllers/question');
 const AnswerController = require('./controllers/answer');
 
 // Middleware to require login/auth
-const requireAuth = passport.authenticate('jwt', { session: false });
+const requireAuth = (req, res, next) => passport.authenticate('jwt', { session: false }, function(err, user, info) {
+  if (err) { return err; }
+});
 const requireLogin = passport.authenticate('local', { session: false });
 
 module.exports = function(app) {
@@ -40,7 +42,7 @@ module.exports = function(app) {
   apiRoutes.use('/users', userRoutes);
 
   // User profile route
-  userRoutes.get('/:userId', requireAuth, UserController.getUserProfile);
+  userRoutes.get('/:userId', requireAuth(req, res, next), UserController.getUserProfile);
 
   //=========================
   // Quiz Routes

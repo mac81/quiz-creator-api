@@ -5,9 +5,11 @@ var QuizSchema = new Schema({
   name: String,
   creator: {
     type: Schema.ObjectId,
-    ref: 'Account'
+    ref: 'User'
   },
+  published: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
+  lastUpdated: { type: Date, default: Date.now },
   questions: [
     {
       type: Schema.ObjectId,
