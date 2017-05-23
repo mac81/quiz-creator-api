@@ -38,10 +38,7 @@ exports.createAnswer = function(req, res, next) {
     question.save(function(err) {
       if (err) throw err;
 
-      res.json({
-        message: 'Answer successfully created',
-        payload: answer
-      });
+      res.json(answer);
     })
   });
 };
