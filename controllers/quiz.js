@@ -92,3 +92,21 @@ exports.updateQuiz = function(req, res, next) {
 
   });
 };
+
+//========================================
+// Get Live Quiz
+//========================================
+exports.getLiveQuiz = function(req, res, next) {
+  const query = Quiz.findById(req.params.quizId);
+  //query.where('live', false);
+  query.populate('questions');
+  query.exec(function (err, quiz) {
+
+    if (err) { return next(err); }
+
+    res.json({
+      message: 'Success',
+      payload: quiz
+    });
+  });
+};

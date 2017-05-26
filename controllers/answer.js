@@ -64,34 +64,80 @@ exports.getAnswer = function(req, res, next) {
 // Delete Answer
 //========================================
 exports.deleteAnswer = function(req, res, next) {
-  Answer.findByIdAndRemove(req.params.answerId, function(err, answer) {
+  // Answer.findByIdAndRemove(req.params.answerId, function(err, answer) {
+  //   if (err) throw err;
+  //
+  //   if(answer) {
+  //     res.json({
+  //       message: 'Answer successfully deleted'
+  //     });
+  //   } else {
+  //     res.json({
+  //       message: 'Answer not found!'
+  //     });
+  //   }
+  // });
+  Question.findById(req.params.questionId, function(err, question){
     if (err) throw err;
 
-    if(answer) {
+    question.answers.pull({_id: req.params.answerId});
+    question.save(function (err, updatedQuestion) {
+      if (err) throw(err);
       res.json({
         message: 'Answer successfully deleted'
       });
-    } else {
-      res.json({
-        message: 'Answer not found!'
-      });
-    }
-  });
+    });
+  })
 };
 
 //========================================
 // Update Answer
 //========================================
 exports.updateAnswer = function(req, res, next) {
-  Answer.findByIdAndUpdate(req.params.answerId, {
-    answerText: req.body.answerText
+  Question.findOneAndUpdate({"_id": req.params.questionId, "answers._id": req.params.answerId}, {
+    $set: {
+      'answers.$.answerText': req.body.answerText
+    }
   }, {
     new: true
-  },function(err, answer) {
+  }, function(err, question) {
     if (err) throw err;
 
-    res.json(answer);
+    res.json(question);
   });
+  // Answer.findById(req.params.answerId, function (err, answer) {
+  //   if (err) throw(err);
+  //
+  //   answer.answerText = req.body.answerText ? req.body.answerText : answer.answerText;
+  //   //answer.isCorrectAnswer = req.body.isCorrectAnswer ? req.body.isCorrectAnswer : answer.isCorrectAnswer;
+  //
+  //   answer.save(function (err, updatedAnswer) {
+  //     if (err) throw(err);
+  //     res.json(updatedAnswer);
+  //   });
+  // });
+  // Question.findById(req.params.questionId, function(err, question) {
+  //   console.log(req.params.answerId, req.body.answerText)
+  //   question.update({'answers._id': req.params.answerId}, {
+  //     '$set': {
+  //       'answers.$.answerText': req.body.answerText
+  //     }
+  //   }, function(err) {
+  //     question.save(function (err, updatedQuestion) {
+  //       if (err) throw(err);
+  //       res.json(updatedQuestion);
+  //     });
+  //   });
+  // });
+  // Question.update({"_id": req.params.questionId, "answers._id": req.params.answerId}, {
+  //   $set: {
+  //     "answers.$.answerText": req.body.answerText
+  //   }
+  // }, function(err) {
+  //   if (err) throw(err);
+  //   res.json({message: "Question Updated"});
+  // });
+
 };
 
 

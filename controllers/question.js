@@ -5,7 +5,7 @@ const Question = require('../models/question');
 // Get Quiz questions
 //========================================
 exports.getQuestions = function(req, res, next) {
-  Quiz.findById(req.params.quizId).populate('questions').exec(function(err, quiz) {
+  Quiz.findById(req.params.quizId).populate('questions', 'questionText label nodeId').exec(function(err, quiz) {
     if (err) { return next(err); }
 
     if(quiz) {
@@ -79,39 +79,62 @@ exports.getQuestion = function(req, res, next) {
 // Delete Question
 //========================================
 exports.deleteQuestion = function(req, res, next) {
-  Question.findByIdAndRemove(req.params.questionId, function(err, question) {
+  // Question.findByIdAndRemove(req.params.questionId, function(err, question) {
+  //   if (err) throw err;
+  //
+  //   if(question) {
+  //     res.json({
+  //       message: 'Question successfully deleted'
+  //     });
+  //   } else {
+  //     res.json({
+  //       message: 'Question not found!'
+  //     });
+  //   }
+  // });
+  Quiz.findById(req.params.quizId, function(err, quiz){
     if (err) throw err;
 
-    if(question) {
+    quiz.questions.pull({_id: req.params.questionId});
+    quiz.save(function (err, updatedQuiz) {
+      if (err) throw(err);
       res.json({
         message: 'Question successfully deleted'
       });
-    } else {
-      res.json({
-        message: 'Question not found!'
-      });
-    }
-  });
+    });
+  })
 };
 
 //========================================
 // Update Question
 //========================================
 exports.updateQuestion = function(req, res, next) {
-  Question.findByIdAndUpdate(req.params.questionId, {
-    questionText: req.body.questionText
-  }, {
-    new: true
-  },function(err, question) {
-    if (err) throw err;
+  // Question.findByIdAndUpdate(req.params.questionId, {
+  //   questionText: req.body.questionText
+  // }, {
+  //   new: true
+  // },function(err, question) {
+  //   if (err) throw err;
+  //
+  //   // Quiz.findById(req.params.quizId, function(err, quiz) {
+  //   //   if (err) { return next(err); }
+  //   //
+  //   //   res.json(question);
+  //   // });
+  //
+  //   res.json(question);
+  // });
 
-    // Quiz.findById(req.params.quizId, function(err, quiz) {
-    //   if (err) { return next(err); }
-    //
-    //   res.json(question);
-    // });
+  Question.findById(req.params.questionId, function (err, question) {
+    if (err) throw(err);
 
-    res.json(question);
+    question.questionText = req.body.questionText ? req.body.questionText : question.questionText;
+    question.correctAnswer = req.body.correctAnswer ? req.body.correctAnswer : question.correctAnswer;
+
+    question.save(function (err, updatedQuestion) {
+      if (err) throw(err);
+      res.json(updatedQuestion);
+    });
   });
 };
 

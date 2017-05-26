@@ -19,6 +19,8 @@ module.exports = function(app) {
   const userRoutes = express.Router();
   const quizRoutes = express.Router();
 
+  const quizRoutesLive = express.Router();
+
   //=========================
   // Auth Routes
   //=========================
@@ -105,6 +107,10 @@ module.exports = function(app) {
   //=========================
   // All Routes
   //=========================
+
+  apiRoutes.use('/live', quizRoutesLive);
+
+  quizRoutesLive.get('/:quizId', QuizController.getLiveQuiz);
 
   // Set url for API group routes
   app.use('/api', apiRoutes);

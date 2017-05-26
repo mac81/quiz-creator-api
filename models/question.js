@@ -5,10 +5,20 @@ var QuestionSchema = new Schema({
   questionText: String,
   label: String,
   nodeId: Number,
+  correctAnswer: String,
+  // correctAnswer: {
+  //   type: Schema.ObjectId,
+  //   ref: 'Answer'
+  // },
+  // answers: [
+  //   {
+  //     type: Schema.ObjectId,
+  //     ref: 'Answer'
+  //   }
+  // ]
   answers: [
     {
-      type: Schema.ObjectId,
-      ref: 'Answer'
+      answerText: String
     }
   ]
 });

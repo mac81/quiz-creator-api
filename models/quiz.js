@@ -10,6 +10,7 @@ var QuizSchema = new Schema({
   published: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   lastUpdated: { type: Date, default: Date.now },
+  live: { type: Boolean, default: false },
   questions: [
     {
       type: Schema.ObjectId,
